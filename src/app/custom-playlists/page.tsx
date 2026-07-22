@@ -397,7 +397,7 @@ export default function PlaylistsPage() {
             Listas Personalizadas
           </h1>
           <p className="text-sm" style={{ color: 'var(--text-secondary, rgba(255,255,255,0.45))' }}>
-            Crea y edita tus propias colecciones de canciones
+            Crea y edita tus propias listas de canciones
           </p>
         </div>
       </div>
