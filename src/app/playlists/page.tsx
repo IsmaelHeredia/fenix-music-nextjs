@@ -100,15 +100,15 @@ export default function PlaylistsPage() {
           </div>
           <div className="pb-1 space-y-1">
             <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--accent, #6ee29e)' }}>
-              Módulos de Almacenamiento
+              Biblioteca Local
             </p>
             <h1 className="text-[28px] font-bold leading-tight" style={{ color: 'var(--text-primary, #fff)' }}>
-              Tus Colecciones
+              Playlists de la Biblioteca
             </h1>
             {!loading && playlists.length > 0 && (
               <p className="text-sm" style={{ color: 'var(--text-secondary, rgba(255,255,255,0.45))' }}>
                 <span style={{ color: 'var(--text-primary, #fff)' }}>
-                  {filteredPlaylists.length} colecciones
+                  {filteredPlaylists.length} playlists
                 </span>
                 <span style={{ color: 'var(--text-muted, rgba(255,255,255,0.25))' }}>
                   {' · '}Estructura de carpetas mapeada
