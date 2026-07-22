@@ -1,0 +1,1 @@
+export { GetDashboardStats } from '@/modules/dashboard/application/GetDashboardStats';

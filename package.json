@@ -1,0 +1,43 @@
+{
+  "name": "fenix-player",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:init": "ts-node --project tsconfig.node.json scripts/init-db.ts",
+    "db:reset": "rm -f data/fenix.db && npm run db:init",
+    "db:setup": "npm run db:generate && npm run db:init"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.41.0",
+    "music-metadata": "^10.5.0",
+    "next": "^14.2.5",
+    "plyr": "^3.8.4",
+    "plyr-react": "^6.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-toastify": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/fluent-ffmpeg": "^2.1.28",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "drizzle-kit": "^0.30.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.19",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.5.3"
+  }
+}
