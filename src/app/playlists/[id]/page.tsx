@@ -216,15 +216,16 @@ export default function PlaylistPage({ params }: PageProps) {
       {loading ? (
         <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
           <div
-            className="flex items-center gap-4 px-4 sm:px-6 py-4"
+            className={`grid ${GRID_CLASSES} items-center gap-2 sm:gap-4 px-4 sm:px-6 py-3`}
             style={{
               borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.08))',
               background: 'rgba(255,255,255,0.02)',
             }}
           >
-            {['w-5', 'flex-1', 'w-6', 'w-10'].map((cls, i) => (
-              <div key={i} className={`h-2.5 rounded animate-pulse ${cls}`} style={{ background: 'rgba(255,255,255,0.08)' }} />
-            ))}
+            <span className="text-[15px] font-medium text-center" style={{ color: 'var(--text-muted)' }}>#</span>
+            <span className="text-[15px] font-medium" style={{ color: 'var(--text-muted)' }}>Título</span>
+            <span className="text-xl flex items-center justify-center" style={{ color: 'var(--text-muted)' }}>♥</span>
+            <span className="hidden sm:block text-[15px] font-medium text-center w-full" style={{ color: 'var(--text-muted)' }}>Duración</span>
           </div>
           {Array.from({ length: 12 }).map((_, i) => <TrackSkeletonRow key={i} index={i} />)}
         </div>

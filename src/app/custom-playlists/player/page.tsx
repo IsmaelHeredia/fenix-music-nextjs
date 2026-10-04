@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePlayer, PlayableItem } from '@/context/PlaybackContext';
 import { useFavorites } from '@/context/FavoritesContext';
 import { parseDurationString, formatDuration } from '../playlist.helpers';
-import { HeaderSkeleton, TrackSkeletonRow } from '@/components/skeletons/custom-playlists/CustomPlaylistSkeletons';
+import { PlayerPageSkeleton } from '@/components/skeletons/custom-playlists/CustomPlaylistSkeletons';
 import { TruncatedText } from '@/components/ui/TruncatedText';
 import { TruncatedLink } from '@/components/ui/TruncatedLink';
 import { getPlaylistDurationStr } from '@/lib/duration';
@@ -125,25 +125,7 @@ function CustomPlaylistPlayerContent() {
   };
 
   if (loading) {
-    return (
-      <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8">
-        <HeaderSkeleton />
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
-          <div
-            className="flex items-center gap-4 px-4 sm:px-6 py-4"
-            style={{
-              borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.08))',
-              background: 'rgba(255,255,255,0.02)',
-            }}
-          >
-            {['w-5', 'flex-1', 'w-6', 'w-10'].map((cls, i) => (
-              <div key={i} className={`h-2.5 rounded animate-pulse ${cls}`} style={{ background: 'rgba(255,255,255,0.08)' }} />
-            ))}
-          </div>
-          {Array.from({ length: 8 }).map((_, i) => <TrackSkeletonRow key={i} index={i} />)}
-        </div>
-      </div>
-    );
+    return <PlayerPageSkeleton />;
   }
 
   if (notFound || !detail) {
@@ -476,25 +458,7 @@ function CustomPlaylistPlayerContent() {
 
 export default function CustomPlaylistPlayerPage() {
   return (
-    <Suspense fallback={
-      <div className="px-4 sm:px-6 md:px-8 py-6 md:py-8">
-        <HeaderSkeleton />
-        <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
-          <div
-            className="flex items-center gap-4 px-4 sm:px-6 py-4"
-            style={{
-              borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.08))',
-              background: 'rgba(255,255,255,0.02)',
-            }}
-          >
-            {['w-5', 'flex-1', 'w-6', 'w-10'].map((cls, i) => (
-              <div key={i} className={`h-2.5 rounded animate-pulse ${cls}`} style={{ background: 'rgba(255,255,255,0.08)' }} />
-            ))}
-          </div>
-          {Array.from({ length: 8 }).map((_, i) => <TrackSkeletonRow key={i} index={i} />)}
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<PlayerPageSkeleton />}>
       <CustomPlaylistPlayerContent />
     </Suspense>
   );

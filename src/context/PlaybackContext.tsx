@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useRadioPlayer } from '@/context/RadioPlayerContext';
 
 export type PlayableItem = {
   id: number;
@@ -57,6 +58,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState<RepeatMode>('off');
 
+  const { isRadioPlaying, stopRadio } = useRadioPlayer();
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const waveformIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,6 +68,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     stateRef.current = { queue, currentTrack, repeat, shuffle };
   }, [queue, currentTrack, repeat, shuffle]);
+
+  const radioRef = useRef({ isRadioPlaying, stopRadio });
+  useEffect(() => {
+    radioRef.current = { isRadioPlaying, stopRadio };
+  }, [isRadioPlaying, stopRadio]);
 
   useEffect(() => {
     audioRef.current = new Audio();
@@ -88,8 +96,15 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const onCanPlay = () => {
       if (!stateRef.current.currentTrack?.filename) {
         setIsLoadingTrack(false);
-        audio.play().then(() => setIsPlaying(true)).catch(() => { });
+        audio.play().catch(() => { });
       }
+    };
+
+    const onPlay = () => setIsPlaying(true);
+
+    const onPause = () => {
+      if (audio.ended) return;
+      setIsPlaying(false);
     };
 
     const onEnded = () => {
@@ -104,7 +119,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       if (currentQueue.length === 0 || !activeTrack) {
         if (currentRepeat === 'all' && currentQueue.length > 0) {
           playTrack(currentQueue[0]);
+          return;
         }
+        setIsPlaying(false);
         return;
       }
 
@@ -116,17 +133,17 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
       const currentIndex = currentQueue.findIndex(t => t.id === activeTrack.id);
 
-      if (currentRepeat === 'all') {
-        if (currentIndex !== -1 && currentIndex < currentQueue.length - 1) {
-          playTrack(currentQueue[currentIndex + 1]);
-        } else if (currentQueue.length > 0) {
-          playTrack(currentQueue[0]);
-        }
-      } else {
-        if (currentIndex !== -1 && currentIndex < currentQueue.length - 1) {
-          playTrack(currentQueue[currentIndex + 1]);
-        }
+      if (currentIndex !== -1 && currentIndex < currentQueue.length - 1) {
+        playTrack(currentQueue[currentIndex + 1]);
+        return;
       }
+
+      if (currentRepeat === 'all' && currentQueue.length > 0) {
+        playTrack(currentQueue[0]);
+        return;
+      }
+
+      setIsPlaying(false);
     };
 
     const onError = () => {
@@ -137,6 +154,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('loadedmetadata', onLoadedMetadata);
     audio.addEventListener('canplay', onCanPlay);
+    audio.addEventListener('play', onPlay);
+    audio.addEventListener('pause', onPause);
     audio.addEventListener('ended', onEnded);
     audio.addEventListener('error', onError);
 
@@ -144,6 +163,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener('timeupdate', onTimeUpdate);
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
       audio.removeEventListener('canplay', onCanPlay);
+      audio.removeEventListener('play', onPlay);
+      audio.removeEventListener('pause', onPause);
       audio.removeEventListener('ended', onEnded);
       audio.removeEventListener('error', onError);
       audio.pause();
@@ -159,7 +180,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const safePlayAudio = () => {
     if (!audioRef.current) return;
     audioRef.current.play()
-      .then(() => setIsPlaying(true))
       .catch(err => console.error("Error disparando reproducción síncrona:", err));
   };
 
@@ -267,6 +287,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const playTrack = (track: PlayableItem, newQueue?: PlayableItem[]) => {
     if (!audioRef.current) return;
 
+    if (radioRef.current.isRadioPlaying) {
+      radioRef.current.stopRadio();
+    }
+
     if (loadingTimeoutRef.current) {
       clearTimeout(loadingTimeoutRef.current);
       loadingTimeoutRef.current = null;
@@ -296,9 +320,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     if (!audioRef.current || !currentTrack || isLoadingTrack) return;
     if (isPlaying) {
       audioRef.current.pause();
-      setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => { });
+      if (radioRef.current.isRadioPlaying) {
+        radioRef.current.stopRadio();
+      }
+      audioRef.current.play().catch(() => { });
     }
   };
 

@@ -6,4 +6,5 @@ export interface PlaylistRepository {
   findByName(name: string): Playlist | null;
   save(playlist: Omit<Playlist, 'id'>): Playlist;
   delete(id: number): boolean;
+  deleteEmpty(): number;
 }

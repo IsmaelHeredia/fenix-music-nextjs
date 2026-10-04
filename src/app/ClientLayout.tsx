@@ -5,8 +5,10 @@ import { ThemeProvider, useTheme } from '@/components/ui/ThemeProvider';
 import { PlayerProvider } from '@/context/PlaybackContext';
 import { RadioPlayerProvider } from '@/context/RadioPlayerContext';
 import { FavoritesProvider } from '@/context/FavoritesContext';
+import { TabTitleProvider } from '@/context/TabTitleContext';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { PlayerBar } from '@/components/player/PlayerBar';
+import { TabTitle } from '@/components/player/TabTitle';
 import { ToastContainer } from 'react-toastify';
 import { AboutModal } from '@/components/modals/AboutModal';
 
@@ -71,43 +73,44 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <FavoritesProvider>
-        <PlayerProvider>
-          <RadioPlayerProvider>
-            <div className="h-full flex flex-col gap-2 p-2 md:p-1 transition-colors duration-200">
-              <div className="flex flex-1 gap-2 min-h-0 relative overflow-hidden">
-                
-                <div className="flex-shrink-0 h-full flex flex-col">
-                  <Sidebar />
-                </div>
-                
-                <div className="absolute top-3 right-4 z-10 flex items-center gap-2">
-                  <AboutButton onClick={() => setIsAboutOpen(true)} />
-                  <ThemeToggle />
-                </div>
-
-                <main
-                  className="flex flex-col flex-1 rounded-xl overflow-y-auto fenix-content-scroll min-w-0"
-                  style={{
-                    background: 'var(--bg-surface, #121212)',
-                    border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
-                  }}
-                  role="main"
-                >
-                  <div className="flex-1">
-                    <div className="pt-4">{children}</div>
+        <RadioPlayerProvider>
+          <PlayerProvider>
+            <TabTitleProvider>
+              <TabTitle />
+              <div className="h-full flex flex-col gap-2 p-2 md:p-1 transition-colors duration-200">
+                <div className="flex flex-1 gap-2 min-h-0 relative overflow-hidden">
+                  <div className="flex-shrink-0 h-full flex flex-col">
+                    <Sidebar />
                   </div>
-                </main>
+                  <div className="absolute top-3 right-4 z-10 flex items-center gap-2">
+                    <AboutButton onClick={() => setIsAboutOpen(true)} />
+                    <ThemeToggle />
+                  </div>
+
+                  <main
+                    className="flex flex-col flex-1 rounded-xl overflow-y-auto fenix-content-scroll min-w-0"
+                    style={{
+                      background: 'var(--bg-surface, #121212)',
+                      border: '1px solid var(--border-color, rgba(255,255,255,0.08))',
+                    }}
+                    role="main"
+                  >
+                    <div className="flex-1">
+                      <div className="pt-4">{children}</div>
+                    </div>
+                  </main>
+                </div>
+
+                <div className="w-full shrink-0 pb-1">
+                  <PlayerBar />
+                </div>
               </div>
 
-              <div className="w-full shrink-0 pb-1">
-                <PlayerBar />
-              </div>
-            </div>
-
-            <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-            <ToastContainerWithTheme />
-          </RadioPlayerProvider>
-        </PlayerProvider>
+              <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+              <ToastContainerWithTheme />
+            </TabTitleProvider>
+          </PlayerProvider>
+        </RadioPlayerProvider>
       </FavoritesProvider>
     </ThemeProvider>
   );

@@ -99,11 +99,6 @@ export function PlayerBar() {
     setFavLoading(false);
   };
 
-  const accentSolidStyle: React.CSSProperties = {
-    background: 'var(--accent, #6ee29e)',
-    color: '#000',
-  };
-
   if (isLoadingTrack && currentTrack) {
     return (
       <footer
@@ -269,45 +264,37 @@ export function PlayerBar() {
           <button
             onClick={toggleShuffle}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full hover:bg-[rgba(110,226,158,0.08)] p-2"
-            style={{
-              color: shuffle ? 'var(--accent, #6ee29e)' : 'var(--text-muted, rgba(255,255,255,0.3))',
-            }}
+            aria-pressed={shuffle}
+            className="fenix-ctl-btn fenix-toggle-btn"
           >
             <IconShuffle />
           </button>
           <button
             onClick={prevTrack}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full hover:bg-[rgba(110,226,158,0.08)] p-2"
-            style={{ color: 'var(--accent, #6ee29e)' }}
+            className="fenix-ctl-btn fenix-ctl-accent"
           >
             <IconSkipPrev />
           </button>
           <button
             onClick={togglePlay}
             disabled={blocked}
-            className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:shadow-[0_0_20px_rgba(110,226,158,0.3)]"
-            style={accentSolidStyle}
+            className="fenix-ctl-btn fenix-ctl-play"
           >
             {isLoadingTrack ? <IconLoading /> : isPlaying ? <IconPause /> : <IconPlay />}
           </button>
           <button
             onClick={handleNextClick}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full hover:bg-[rgba(110,226,158,0.08)] p-2"
-            style={{ color: 'var(--accent, #6ee29e)' }}
+            className="fenix-ctl-btn fenix-ctl-accent"
           >
             <IconSkipNext />
           </button>
           <button
             onClick={toggleRepeat}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full hover:bg-[rgba(110,226,158,0.08)] p-2"
-            style={{
-              color: repeat !== 'off' ? 'var(--accent, #6ee29e)' : 'var(--text-muted, rgba(255,255,255,0.3))',
-              opacity: repeat !== 'off' ? 1 : 0.5,
-            }}
+            aria-pressed={repeat !== 'off'}
+            className="fenix-ctl-btn fenix-toggle-btn"
           >
             {getRepeatIcon()}
           </button>
@@ -361,40 +348,37 @@ export function PlayerBar() {
           <button
             onClick={toggleShuffle}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full active:scale-90"
-            style={{ color: shuffle ? 'var(--accent, #6ee29e)' : 'rgba(255,255,255,0.35)' }}
+            aria-pressed={shuffle}
+            className="fenix-ctl-btn fenix-toggle-btn"
           >
             <IconShuffle />
           </button>
           <button
             onClick={prevTrack}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full active:scale-90"
-            style={{ color: 'var(--accent, #6ee29e)' }}
+            className="fenix-ctl-btn fenix-ctl-accent"
           >
             <IconSkipPrev />
           </button>
           <button
             onClick={togglePlay}
             disabled={blocked}
-            className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition-all active:scale-90"
-            style={accentSolidStyle}
+            className="fenix-ctl-btn fenix-ctl-play"
           >
             {isLoadingTrack ? <IconLoading /> : isPlaying ? <IconPause /> : <IconPlay />}
           </button>
           <button
             onClick={handleNextClick}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full active:scale-90"
-            style={{ color: 'var(--accent, #6ee29e)' }}
+            className="fenix-ctl-btn fenix-ctl-accent"
           >
             <IconSkipNext />
           </button>
           <button
             onClick={toggleRepeat}
             disabled={blocked}
-            className="p-1 transition-all hover:scale-110 rounded-full active:scale-90"
-            style={{ color: repeat !== 'off' ? 'var(--accent, #6ee29e)' : 'rgba(255,255,255,0.35)' }}
+            aria-pressed={repeat !== 'off'}
+            className="fenix-ctl-btn fenix-toggle-btn"
           >
             {getRepeatIcon()}
           </button>

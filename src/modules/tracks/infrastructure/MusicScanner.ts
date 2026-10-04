@@ -41,6 +41,8 @@ export class MusicScanner {
       this.trackRepo.deleteMissing(foundFilenames);
     }
 
+    this.playlistRepo.deleteEmpty();
+
     return { added, skipped };
   }
 

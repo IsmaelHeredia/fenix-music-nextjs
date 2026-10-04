@@ -8,6 +8,9 @@ import dynamic from 'next/dynamic';
 import { toast } from 'react-toastify';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { TruncatedText } from '@/components/ui/TruncatedText';
+import { usePlayer } from '@/context/PlaybackContext';
+import { useRadioPlayer } from '@/context/RadioPlayerContext';
+import { useMediaTitle } from '@/context/TabTitleContext';
 
 const Plyr = dynamic(() => import('plyr-react').then((m) => m.Plyr).catch((err) => {
   console.error('Error loading Plyr:', err);
@@ -24,10 +27,11 @@ const Plyr = dynamic(() => import('plyr-react').then((m) => m.Plyr).catch((err) 
 import 'plyr-react/plyr.css';
 import { LiveStreamGridSkeleton } from '@/components/skeletons/livestreams/LiveStreamGridSkeleton';
 
-function StreamPlayer({ stream }: { stream: any }) {
+function StreamPlayer({ stream, onPlayingChange }: { stream: any; onPlayingChange: (playing: boolean) => void }) {
   const [isMounted, setIsMounted] = useState(false);
   const [playerError, setPlayerError] = useState<string | null>(null);
   const plyrRef = useRef<any>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   const getYouTubeId = (url: string) => {
     const match = url.match(/(?:v=|youtu\.be\/|\/embed\/)([^&\n?#]+)/);
@@ -72,6 +76,27 @@ function StreamPlayer({ stream }: { stream: any }) {
       };
     }
   }, [isMounted]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!isMounted || !el) return;
+
+    const onStart = () => onPlayingChange(true);
+    const onStop = () => onPlayingChange(false);
+
+    el.addEventListener('playing', onStart, true);
+    el.addEventListener('play', onStart, true);
+    el.addEventListener('pause', onStop, true);
+    el.addEventListener('ended', onStop, true);
+
+    return () => {
+      el.removeEventListener('playing', onStart, true);
+      el.removeEventListener('play', onStart, true);
+      el.removeEventListener('pause', onStop, true);
+      el.removeEventListener('ended', onStop, true);
+      onPlayingChange(false);
+    };
+  }, [isMounted, playerError, onPlayingChange]);
 
   if (!videoId && !stream.link) {
     return (
@@ -129,7 +154,7 @@ function StreamPlayer({ stream }: { stream: any }) {
   }
 
   return (
-    <div className="w-full h-full">
+    <div ref={wrapRef} className="w-full h-full">
       <Plyr
         ref={plyrRef}
         source={source as any}
@@ -156,7 +181,18 @@ export default function LiveStreamsPage() {
   const [editingStream, setEditingStream] = useState<any | null>(null);
   const [playerKey, setPlayerKey] = useState(Date.now());
   const [isPlaying, setIsPlaying] = useState(false);
+  const [streamPlaying, setStreamPlaying] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+
+  const { isPlaying: isMusicPlaying, togglePlay: pauseMusic } = usePlayer();
+  const { isRadioPlaying, stopRadio } = useRadioPlayer();
+
+  useMediaTitle('livestream', selectedStream && isPlaying && streamPlaying ? selectedStream.name : null);
+
+  const pauseOtherMedia = () => {
+    if (isMusicPlaying) pauseMusic();
+    if (isRadioPlaying) stopRadio();
+  };
 
   useEffect(() => {
     fetchStreams();
@@ -230,6 +266,7 @@ export default function LiveStreamsPage() {
       setIsPlaying(false);
       setSelectedStream(null);
     } else {
+      pauseOtherMedia();
       setSelectedStream(stream);
       setIsPlaying(true);
       setPlayerKey(Date.now());
@@ -427,6 +464,7 @@ export default function LiveStreamsPage() {
               <StreamPlayer
                 key={`player-${selectedStream.id}-${playerKey}`}
                 stream={selectedStream}
+                onPlayingChange={setStreamPlaying}
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center">

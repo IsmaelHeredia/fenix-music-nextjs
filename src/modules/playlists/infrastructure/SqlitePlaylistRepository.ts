@@ -1,4 +1,4 @@
-import { eq, sql, notInArray } from 'drizzle-orm';
+import { eq, sql, notInArray, isNotNull } from 'drizzle-orm';
 import { getDb } from '@/modules/shared/infrastructure/sqlite-client';
 import { songs, playlists } from '@/modules/shared/db/schema';
 import type { PlaylistRepository } from '@/modules/playlists/domain/PlaylistRepository';
@@ -47,10 +47,26 @@ export class SqlitePlaylistRepository implements PlaylistRepository {
     return result.length > 0;
   }
 
+  deleteEmpty(): number {
+    const db = getDb();
+
+    const usedPlaylistIds = db
+      .select({ id: songs.playlistId })
+      .from(songs)
+      .where(isNotNull(songs.playlistId));
+
+    const result = db
+      .delete(playlists)
+      .where(notInArray(playlists.id, usedPlaylistIds))
+      .returning({ id: playlists.id })
+      .all();
+
+    return result.length;
+  }
+
   deleteMissing(foundFilenames: string[]): void {
     getDb().delete(songs)
       .where(notInArray(songs.filename, foundFilenames))
       .run();
   }
-
 }

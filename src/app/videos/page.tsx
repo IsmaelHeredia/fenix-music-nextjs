@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { VideoGridSkeleton } from '@/components/skeletons/videos/VideoGridSkeleton';
 import { TruncatedText } from '@/components/ui/TruncatedText';
+import { usePlayer } from '@/context/PlaybackContext';
+import { useRadioPlayer } from '@/context/RadioPlayerContext';
+import { useMediaTitle } from '@/context/TabTitleContext';
 
 interface LocalVideo {
   id: number;
@@ -24,6 +27,16 @@ export default function VideosPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const { isPlaying: isMusicPlaying, togglePlay: pauseMusic } = usePlayer();
+  const { isRadioPlaying, stopRadio } = useRadioPlayer();
+
+  useMediaTitle('video', selectedVideo && isPlaying ? selectedVideo.name : null);
+
+  const pauseOtherMedia = () => {
+    if (isMusicPlaying) pauseMusic();
+    if (isRadioPlaying) stopRadio();
+  };
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -81,10 +94,12 @@ export default function VideosPage() {
         if (isPlaying) {
           videoRef.current.pause();
         } else {
+          pauseOtherMedia();
           videoRef.current.play();
         }
       }
     } else {
+      pauseOtherMedia();
       setSelectedVideo(video);
       setIsPlaying(true);
     }
@@ -95,6 +110,7 @@ export default function VideosPage() {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
+        pauseOtherMedia();
         videoRef.current.play();
       }
     }
@@ -257,7 +273,7 @@ export default function VideosPage() {
                 autoPlay
                 className="w-full h-full max-h-[65vh] object-contain"
               />
-              
+
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
                 <button
                   onClick={handleTogglePlay}

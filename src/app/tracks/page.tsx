@@ -216,15 +216,17 @@ export default function TracksPage() {
       {loading ? (
         <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
           <div
-            className="flex items-center gap-4 px-4 sm:px-6 py-3"
+            className={`grid ${GRID_CLASSES} items-center gap-2 sm:gap-4 px-4 sm:px-6 py-3`}
             style={{
               borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.08))',
               background: 'rgba(255,255,255,0.02)',
             }}
           >
-            {['w-5', 'flex-1', 'w-20 hidden md:block', 'w-6', 'w-12'].map((cls, i) => (
-              <div key={i} className={`h-2.5 rounded animate-pulse ${cls}`} style={{ background: 'rgba(255,255,255,0.08)' }} />
-            ))}
+            <span className="text-[15px] font-medium text-center select-none" style={{ color: 'var(--text-muted, rgba(255,255,255,0.3))' }}>#</span>
+            <span className="text-[15px] font-medium" style={{ color: 'var(--text-muted, rgba(255,255,255,0.3))' }}>Título</span>
+            <span className="text-[15px] font-medium hidden md:block text-center w-full" style={{ color: 'var(--text-muted, rgba(255,255,255,0.3))' }}>Playlist</span>
+            <span className="text-xl flex items-center justify-center" style={{ color: 'var(--text-muted, rgba(255,255,255,0.3))' }}>♥</span>
+            <span className="text-[15px] font-medium text-center hidden sm:block" style={{ color: 'var(--text-muted, rgba(255,255,255,0.3))' }}>Duración</span>
           </div>
           {Array.from({ length: 14 }).map((_, i) => <TrackSkeletonRow key={i} index={i} />)}
         </div>
